@@ -3,8 +3,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import requests
 
 class SongCollector:
-    def __init__(self, dataframe=pd.DataFrame()):
-        self.df = dataframe
+    def __init__(self):
         self.playlist_ids = []
         self.categories = []
         self.category_ids = []
