@@ -53,8 +53,9 @@ class SongCollector:
         self.check_authmanager()
 
         # get all available category id's
-        self.category_ids = [cat['id']
-                             for cat in self.sp.categories()['categories']['items']]
+        sp_cats = self.sp.categories()
+        for cat in tqdm(sp_cats['categories']['items'], disable=progress_off):
+            self.category_ids.append(cat['id'])
 
         # now get & save all playlist id's from those categories
         for cat_id in self.category_ids:
