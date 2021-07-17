@@ -27,7 +27,7 @@ class SongCollector:
         self.playlists = playlist_ids
 
     def perform_full_take(self, deep_lookup=False,
-                          to_pkl=False, progress_off=False):
+                          to_txt=False, progress_off=False):
         """Performs a 'full take' of as many songs that can be found via the
          spotify API.
 
@@ -81,6 +81,10 @@ class SongCollector:
         self.track_ids = list(set(self.track_ids))
         print(f"{len(self.track_ids)} unique track ids found")
 
+        if to_txt and not deep_lookup:
+            print("Saving track ids")
+            self.save_to_txt(self.track_ids, "track_ids_small.txt")
+
         # if deep_lookup
         if deep_lookup:
             print("starting deep lookup...")
@@ -100,6 +104,9 @@ class SongCollector:
                   f"{len(self.track_ids_for_all_albums_found)} unique"
                   " track ids found"
                 )
+            if to_txt:
+                print("Saving track ids")
+                self.save_to_txt(self.track_ids, "track_ids_big.txt")
 
     def get_track_ids_from_album_uris(self, album_uris):
         """Returns a list of track ids for every album uri provided as an input
