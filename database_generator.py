@@ -1,6 +1,7 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import requests
+from tqdm.auto import tqdm
 
 class SongCollector:
     def __init__(self):
@@ -25,7 +26,8 @@ class SongCollector:
     def load_playlist_ids(self, playlist_ids):
         self.playlists = playlist_ids
 
-    def perform_full_take(self, deep_lookup=False, to_pkl=False):
+    def perform_full_take(self, deep_lookup=False,
+                          to_pkl=False, progress_off=False):
         """Performs a 'full take' of as many songs that can be found via the
          spotify API.
 
@@ -82,7 +84,7 @@ class SongCollector:
         if deep_lookup:
             print("starting deep lookup...")
             print("now getting all album ids for every song")
-            for track_id in tqdm(self.track_ids):
+            for track_id in tqdm(self.track_ids, disable=progress_off):
                 self.album_uris.append(sp.track(track_id)['album']['uri'])
 
             self.album_uris = list(set(self.album_uris))
@@ -118,7 +120,7 @@ class SongCollector:
         """
 
         track_ids = []
-        for album_uri in tqdm(album_uris, disable=False):
+        for album_uri in tqdm(album_uris, disable=progress_off):
             tracks = self.sp.album_tracks(album_uri)
             for track in tracks['items']:
                 track_ids.append(track['id'])
