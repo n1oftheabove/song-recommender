@@ -90,7 +90,7 @@ class SongCollector:
             print("starting deep lookup...")
             print("now getting all album ids for every song")
             for track_id in tqdm(self.track_ids, disable=progress_off):
-                self.album_uris.append(sp.track(track_id)['album']['uri'])
+                self.album_uris.append(self.sp.track(track_id)['album']['uri'])
 
             self.album_uris = list(set(self.album_uris))
             print(f"{len(self.album_uris)} unique album uris found")
