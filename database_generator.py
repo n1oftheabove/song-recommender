@@ -151,6 +151,11 @@ class SongCollector:
     def track_exists(self, track):
         return track['track']
 
+    def save_to_txt(self, lst, filename):
+        with open('data/'+filename, 'w') as file_handler:
+            for item in lst:
+                file_handler.write("{}\n".format(item))
+
     def check_authmanager(self):
         if not self.sp.auth_manager:
             print("spotipy.Spotify().auth_manager not set up."
