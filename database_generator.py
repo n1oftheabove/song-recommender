@@ -145,7 +145,7 @@ class SongCollector:
         return track['track']['id']
 
     def id_exists(self, track):
-        return bool(get_id(track))
+        return bool(self.get_id(track))
 
     def track_exists(self, track):
         return track['track']
