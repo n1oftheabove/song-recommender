@@ -1,9 +1,14 @@
-# song-recommender
+# Song Recommender
 
-A song recommender trained on spotify song data using their audio features
+A song recommender trained on spotify song data using their audio features. Audio features were collected using Spotify's Python API wrapper [Spotipy](https://spotipy.readthedocs.io/en/2.18.0/). For this purpose I wrote a database generator class which collects ca. 100k unique track id's from the Spotify music data base.
 
+to be continued....
 
-## Database Generator
+## Song recommender
+
+lorem ipsum
+
+## Utility: Database Generator
 
 Module containing `class SongCollector`, which allows to create a database of
 Spotify track ids (to be able to use these track ids to create audio features
