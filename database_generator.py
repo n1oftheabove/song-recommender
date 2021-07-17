@@ -1,7 +1,8 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-import requests
+# import requests
 from tqdm.auto import tqdm
+
 
 class SongCollector:
     def __init__(self):
@@ -23,9 +24,6 @@ class SongCollector:
         self.sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(
             client_id=c_id, client_secret=c_se))
 
-    def load_playlist_ids(self, playlist_ids):
-        self.playlists = playlist_ids
-
     def perform_full_take(self, deep_lookup=False,
                           to_txt=False, progress_off=False):
         """Performs a 'full take' of as many songs that can be found via the
@@ -44,8 +42,11 @@ class SongCollector:
         deep_lookup : bool, optional
             toggles whether deep lookup should be performed
 
-        to_pkl : bool, optional
-            toggles whether track ids should be saved to .pkl file in ./data
+        to_txt : bool, optional
+            toggles whether track ids should be saved to .txt file in ./data
+
+        progress_off: bool, optional
+            if False, shows tqdm progress bar in jupyter notebook or console output
 
         """
 
@@ -63,7 +64,7 @@ class SongCollector:
             try:
                 pl_per_category_json = self.sp.category_playlists(cat_id)[
                     'playlists']['items']
-            except spotipy.client.SpotifyException as e:
+            except spotipy.client.SpotifyException:
                 continue
 
             for pl in pl_per_category_json:
@@ -98,17 +99,17 @@ class SongCollector:
             print("Getting all the songs from those uris")
 
             self.track_ids_for_all_albums_found = list(
-                set(self.get_track_ids_from_album_uris(self.album_uris)))
+                set(self.get_track_ids_from_album_uris(self.album_uris, progress_off=progress_off)))
 
             print("After deep lookup: "
                   f"{len(self.track_ids_for_all_albums_found)} unique"
                   " track ids found"
-                )
+                  )
             if to_txt:
                 print("Saving track ids")
                 self.save_to_txt(self.track_ids, "track_ids_big.txt")
 
-    def get_track_ids_from_album_uris(self, album_uris):
+    def get_track_ids_from_album_uris(self, album_uris, progress_off=False):
         """Returns a list of track ids for every album uri provided as an input
          list
 
@@ -117,8 +118,8 @@ class SongCollector:
         album_uris : list
             A list of Spotify album URIs
 
-        to_pkl : bool, optional
-            toggles whether track ids should be saved to .pkl file in ./data
+        progress_off: bool, optional
+            if False, shows tqdm progress bar in jupyter notebook or console output
 
         Returns
         ----------
@@ -139,7 +140,7 @@ class SongCollector:
         Returns the track ids from one playlist_id
         """
 
-        results = self.sp.user_playlist_tracks("spotify", playlist_id)
+        results = self.sp.playlist_items(playlist_id)
         tracks = results['items']
         while results['next']:
             results = self.sp.next(results)
