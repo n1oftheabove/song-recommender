@@ -98,7 +98,7 @@ class SongCollector:
             print("Getting all the songs from those uris")
 
             self.track_ids_for_all_albums_found = list(
-                set(get_track_ids_from_album_uris(self.album_uris)))
+                set(self.get_track_ids_from_album_uris(self.album_uris)))
 
             print("After deep lookup: "
                   f"{len(self.track_ids_for_all_albums_found)} unique"
