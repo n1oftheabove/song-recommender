@@ -2,6 +2,8 @@ import pandas as pd
 from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy
 from tqdm.auto import tqdm
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
 
 class SongRecommender:
 
@@ -10,6 +12,9 @@ class SongRecommender:
         self.track_ids = []
         self.sp = spotipy.Spotify()
         self.feats_lst = []
+        self.model = KMeans()
+        self.scaler = StandardScaler()
+        self.feat_nums_scaled = pd.DataFrame()
 
     def read_track_ids(self, filepath):
         with open(filepath) as f:
@@ -32,11 +37,26 @@ class SongRecommender:
                      tqdm(self.track_ids, disable=progress_off)]
 
     def df_from_feats_lst(self):
-        self.df = pd.DataFrame(feats_lst)
+        self.df = pd.DataFrame(self.feats_lst)
 
     def create_df(self, filepath, to_pkl=False):
         self.read_track_ids(filepath)
         self.feature_df_from_track_ids()
         self.df_from_feats_lst()
         if to_pkl:
-            pd.to_pickle("data/full_df.pkl")
+            pd.to_pickle(self.df, 'data/full_df.pkl')
+
+    def train(self):
+        feat_nums = self.df._get_numeric_data()
+        self.scaler.fit(feat_nums)
+        self.feat_nums_scaled = self.scaler.transform(feat_nums)
+
+        kmeans = KMeans(n_clusters=8, random_state=7)
+        self.model = kmeans.fit(self.feat_nums_scaled)
+
+    def predict(self):
+        """Updates self.df with predicted clusters
+
+        :return:
+        """
+        self.df['cluster_id'] = self.model.predict(self.feat_nums_scaled)
